@@ -186,7 +186,7 @@ public class TicTacToe implements ActionListener {
         setCurrentPlayer('X');
         setGameRunning(true);
 
-        // MultiPlayer panel
+        // SinglePlayer panel
         JPanel singlePlayerPanel = new JPanel(new GridBagLayout());
         singlePlayerPanel.setBackground(backGroundColor);
 
