@@ -7,6 +7,7 @@ import java.awt.event.ActionListener;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Objects;
+import java.util.Random;
 
 public class TicTacToe implements ActionListener {
     private JFrame frame = new JFrame("Tic Tac Toe");
@@ -19,6 +20,7 @@ public class TicTacToe implements ActionListener {
 
     private char currentPlayer;
     private boolean isGameRunning = false;
+    private String gameType;
 
     // Assets
     private Font font = new Font("Poppins", Font.PLAIN, 25);
@@ -180,6 +182,91 @@ public class TicTacToe implements ActionListener {
         return multiPlayerPanel;
     }
 
+    private JPanel createSinglePlayer() {
+        setCurrentPlayer('X');
+        setGameRunning(true);
+
+        // MultiPlayer panel
+        JPanel singlePlayerPanel = new JPanel(new GridBagLayout());
+        singlePlayerPanel.setBackground(backGroundColor);
+
+        // Title
+        JLabel titleLabel = new JLabel("Tic Tac Toe");
+        titleLabel.setFont(font);
+        titleLabel.setForeground(Color.WHITE);
+
+        GridBagConstraints titleGbc = new GridBagConstraints();
+        titleGbc.gridx = 0;
+        titleGbc.gridy = 0;
+        titleGbc.insets = new Insets(0, 0, 20, 0);
+        singlePlayerPanel.add(titleLabel, titleGbc);
+
+        // Buttons
+        JPanel buttonPanel = new JPanel(new GridLayout(3, 3));
+        buttonPanel.setPreferredSize(new Dimension(300, 300));
+
+        GridBagConstraints buttonGbc = new GridBagConstraints();
+        buttonGbc.gridx = 0;
+        buttonGbc.gridy = 1;
+
+        for (int i = 0; i < 9; ++i) {
+            JButton button = new JButton();
+            button.setFont(font);
+            button.setFocusable(false);
+            button.setBackground(backGroundColor);
+            button.setForeground(Color.WHITE);
+            button.setFocusPainted(true);
+            button.setCursor(Cursor.getPredefinedCursor(Cursor.HAND_CURSOR));
+            button.addActionListener(this);
+            buttons.add(button);
+            buttonPanel.add(button);
+        }
+
+        singlePlayerPanel.add(buttonPanel, buttonGbc);
+
+        // Back button
+        JButton backButton = new JButton("Back");
+        backButton.setPreferredSize(new Dimension(BUTTON_WIDTH, BUTTON_HEIGTH));
+        backButton.setFont(font);
+        backButton.setFocusable(false);
+        backButton.setBackground(backGroundColor);
+        backButton.setForeground(Color.WHITE);
+        backButton.setFocusPainted(true);
+        backButton.setCursor(Cursor.getPredefinedCursor(Cursor.HAND_CURSOR));
+        backButton.addActionListener(e -> {
+            onClick("back_to_home");
+        });
+
+        GridBagConstraints backButtonGbc = new GridBagConstraints();
+        backButtonGbc.gridx = 0;
+        backButtonGbc.gridy = 2;
+        backButtonGbc.insets = new Insets(25, 0, 0, BUTTON_WIDTH + 10);
+
+        // Reset button
+        JButton resetButton = new JButton("Reset");
+        resetButton.setPreferredSize(new Dimension(BUTTON_WIDTH, BUTTON_HEIGTH));
+        resetButton.setFont(font);
+        resetButton.setFocusable(false);
+        resetButton.setBackground(backGroundColor);
+        resetButton.setForeground(Color.WHITE);
+        resetButton.setFocusPainted(true);
+        resetButton.setCursor(Cursor.getPredefinedCursor(Cursor.HAND_CURSOR));
+        resetButton.addActionListener(e -> {
+            onClick("reset_game");
+        });
+
+        GridBagConstraints resetButtonGbc = new GridBagConstraints();
+        resetButtonGbc.gridx = 0;
+        resetButtonGbc.gridy = 2;
+        resetButtonGbc.insets = new Insets(25, BUTTON_WIDTH + 10, 0, 0);
+
+
+        singlePlayerPanel.add(backButton, backButtonGbc);
+        singlePlayerPanel.add(resetButton, resetButtonGbc);
+
+        return singlePlayerPanel;
+    }
+
     private void setCurrentPlayer(char currentPlayer) {
         this.currentPlayer = currentPlayer;
     }
@@ -284,36 +371,72 @@ public class TicTacToe implements ActionListener {
                     button.setBackground(backGroundColor);
                     setGameRunning(true);
                 }
-                break;
+                setCurrentPlayer('X');
             }
             case "multiplayer" -> {
+                buttons.clear();
                 mainPanel = createMultiPlayer();
                 frame.setContentPane(mainPanel);
                 frame.revalidate();
                 frame.repaint();
+                gameType = "multiplayer";
+            }
+            case "singleplayer" -> {
+                buttons.clear();
+                mainPanel = createSinglePlayer();
+                frame.setContentPane(mainPanel);
+                frame.revalidate();
+                frame.repaint();
+                gameType = "singleplayer";
             }
         }
+    }
+
+    private int calculateNextMove() {
+        ArrayList<Integer> tempList = new ArrayList<>();
+
+        for (int i = 0; i < buttons.size(); ++i) {
+            if (Objects.equals(buttons.get(i).getText(), "")) {
+                tempList.add(i);
+            }
+        }
+
+        Random random = new Random();
+        return tempList.get(random.nextInt(tempList.size()));
+    }
+
+    private void checkGameEnd() {
+        if (checkForWinner()) {
+            JOptionPane.showMessageDialog(frame, "Winner is: " + currentPlayer);
+            setGameRunning(false);
+        } else if (isBoardFull()) {
+            JOptionPane.showMessageDialog(frame, "Draw.");
+            setGameRunning(false);
+        } else {
+            switchPlayer();
+        }
+    }
+
+    private void setBoardValue(JButton button) {
+        button.setText(String.valueOf(currentPlayer));
+        button.setForeground(currentPlayer == 'X' ? Color.BLUE : Color.RED);
+
+        checkGameEnd();
     }
 
     @Override
     public void actionPerformed(ActionEvent e) {
         if (!isGameRunning) { return; }
+        if (Objects.equals(gameType, "singleplayer") && currentPlayer != 'X') { return; }
 
         for (JButton button : buttons) {
             if (e.getSource() == button) {
                 if (Objects.equals(button.getText(), "")) {
-                    button.setText(String.valueOf(currentPlayer));
-                    button.setForeground(currentPlayer == 'X' ? Color.BLUE : Color.RED);
+                    setBoardValue(button);
 
-
-                    if (checkForWinner()) {
-                        JOptionPane.showMessageDialog(frame, "Winner is: " + currentPlayer);
-                        setGameRunning(false);
-                    } else if (isBoardFull()) {
-                        JOptionPane.showMessageDialog(frame, "Draw.");
-                        setGameRunning(false);
-                    } else {
-                        switchPlayer();
+                    if (Objects.equals(gameType, "singleplayer") && isGameRunning) {
+                        currentPlayer = 'O';
+                        setBoardValue(buttons.get(calculateNextMove()));
                     }
                 }
             }
