@@ -364,6 +364,7 @@ public class TicTacToe implements ActionListener {
                 frame.setContentPane(mainPanel);
                 frame.revalidate();
                 frame.repaint();
+                break;
             }
             case "reset_game" -> {
                 for (JButton button : buttons) {
@@ -372,6 +373,7 @@ public class TicTacToe implements ActionListener {
                     setGameRunning(true);
                 }
                 setCurrentPlayer('X');
+                break;
             }
             case "multiplayer" -> {
                 buttons.clear();
@@ -380,6 +382,7 @@ public class TicTacToe implements ActionListener {
                 frame.revalidate();
                 frame.repaint();
                 gameType = "multiplayer";
+                break;
             }
             case "singleplayer" -> {
                 buttons.clear();
@@ -388,6 +391,7 @@ public class TicTacToe implements ActionListener {
                 frame.revalidate();
                 frame.repaint();
                 gameType = "singleplayer";
+                break;
             }
         }
     }
