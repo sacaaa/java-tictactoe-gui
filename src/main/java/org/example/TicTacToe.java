@@ -34,15 +34,15 @@ public class TicTacToe implements ActionListener {
         frame.setLocationRelativeTo(null);
         frame.setResizable(false);
 
-        mainPanel = createHomePage();
+        mainPanel = createPanel("home_page");
 
         frame.setContentPane(mainPanel);
         frame.setVisible(true);
     }
 
-    private JPanel createHomePage() {
-        JPanel homePanel = new JPanel(new GridBagLayout());
-        homePanel.setBackground(backGroundColor);
+    private JPanel createPanel(String type) {
+        JPanel panel = new JPanel(new GridBagLayout());
+        panel.setBackground(backGroundColor);
 
         // Title
         JLabel titleLabel = new JLabel("Tic Tac Toe");
@@ -53,219 +53,319 @@ public class TicTacToe implements ActionListener {
         titleGbc.gridx = 0;
         titleGbc.gridy = 0;
         titleGbc.insets = new Insets(0, 0, 20, 0);
+        panel.add(titleLabel, titleGbc);
 
-        // SinglePlayer button
-        JButton singlePlayerButton = new JButton("SinglePlayer");;
-        singlePlayerButton.setPreferredSize(new Dimension(BUTTON_WIDTH, BUTTON_HEIGTH));
-        singlePlayerButton.setFont(font);
-        singlePlayerButton.setFocusable(false);
-        singlePlayerButton.setBackground(backGroundColor);
-        singlePlayerButton.setForeground(Color.WHITE);
-        singlePlayerButton.setFocusPainted(true);
-        singlePlayerButton.setCursor(Cursor.getPredefinedCursor(Cursor.HAND_CURSOR));
-        singlePlayerButton.addActionListener(e -> {
-            onClick("singleplayer");
-        });
+        switch (type) {
+            case "home_page" -> {
+                // Single player button
+                JButton singlePlayerButton = new JButton("SinglePlayer");;
+                singlePlayerButton.setPreferredSize(new Dimension(BUTTON_WIDTH, BUTTON_HEIGTH));
+                singlePlayerButton.setFont(font);
+                singlePlayerButton.setFocusable(false);
+                singlePlayerButton.setBackground(backGroundColor);
+                singlePlayerButton.setForeground(Color.WHITE);
+                singlePlayerButton.setFocusPainted(true);
+                singlePlayerButton.setCursor(Cursor.getPredefinedCursor(Cursor.HAND_CURSOR));
+                singlePlayerButton.addActionListener(e -> {
+                    onClick("singleplayer");
+                });
 
-        GridBagConstraints singlePlayerButtonGbc = new GridBagConstraints();
-        singlePlayerButtonGbc.gridx = 0;
-        singlePlayerButtonGbc.gridy = 1;
-        singlePlayerButtonGbc.insets = new Insets(20, 0, 0, BUTTON_WIDTH + 10);
+                GridBagConstraints singlePlayerButtonGbc = new GridBagConstraints();
+                singlePlayerButtonGbc.gridx = 0;
+                singlePlayerButtonGbc.gridy = 1;
+                singlePlayerButtonGbc.insets = new Insets(20, 0, 0, BUTTON_WIDTH + 10);
 
-        // Multiplayer button
-        JButton multiPlayerButton = new JButton("MultiPlayer");;
-        multiPlayerButton.setPreferredSize(new Dimension(BUTTON_WIDTH, BUTTON_HEIGTH));
-        multiPlayerButton.setFont(font);
-        multiPlayerButton.setFocusable(false);
-        multiPlayerButton.setBackground(backGroundColor);
-        multiPlayerButton.setForeground(Color.WHITE);
-        multiPlayerButton.setFocusPainted(true);
-        multiPlayerButton.setCursor(Cursor.getPredefinedCursor(Cursor.HAND_CURSOR));
-        multiPlayerButton.addActionListener(e -> {
-            onClick("multiplayer");
-        });
+                // Multiplayer button
+                JButton multiPlayerButton = new JButton("MultiPlayer");;
+                multiPlayerButton.setPreferredSize(new Dimension(BUTTON_WIDTH, BUTTON_HEIGTH));
+                multiPlayerButton.setFont(font);
+                multiPlayerButton.setFocusable(false);
+                multiPlayerButton.setBackground(backGroundColor);
+                multiPlayerButton.setForeground(Color.WHITE);
+                multiPlayerButton.setFocusPainted(true);
+                multiPlayerButton.setCursor(Cursor.getPredefinedCursor(Cursor.HAND_CURSOR));
+                multiPlayerButton.addActionListener(e -> {
+                    onClick("multiplayer");
+                });
 
-        GridBagConstraints multiPlayerButtonGbc = new GridBagConstraints();
-        multiPlayerButtonGbc.gridx = 0;
-        multiPlayerButtonGbc.gridy = 1;
-        multiPlayerButtonGbc.insets = new Insets(20, BUTTON_WIDTH + 10, 0, 0);
+                GridBagConstraints multiPlayerButtonGbc = new GridBagConstraints();
+                multiPlayerButtonGbc.gridx = 0;
+                multiPlayerButtonGbc.gridy = 1;
+                multiPlayerButtonGbc.insets = new Insets(20, BUTTON_WIDTH + 10, 0, 0);
 
-        homePanel.add(titleLabel, titleGbc);
-        homePanel.add(singlePlayerButton, singlePlayerButtonGbc);
-        homePanel.add(multiPlayerButton, multiPlayerButtonGbc);
+                panel.add(titleLabel, titleGbc);
+                panel.add(singlePlayerButton, singlePlayerButtonGbc);
+                panel.add(multiPlayerButton, multiPlayerButtonGbc);
 
-        return homePanel;
-    }
+                break;
+            }
+            case "game_page" -> {
+                setCurrentPlayer('X');
+                setGameRunning(true);
 
-    private JPanel createMultiPlayer() {
-        setCurrentPlayer('X');
-        setGameRunning(true);
+                // Buttons
+                JPanel buttonPanel = new JPanel(new GridLayout(3, 3));
+                buttonPanel.setPreferredSize(new Dimension(300, 300));
 
-        // MultiPlayer panel
-        JPanel multiPlayerPanel = new JPanel(new GridBagLayout());
-        multiPlayerPanel.setBackground(backGroundColor);
+                GridBagConstraints buttonGbc = new GridBagConstraints();
+                buttonGbc.gridx = 0;
+                buttonGbc.gridy = 1;
 
-        // Title
-        JLabel titleLabel = new JLabel("Tic Tac Toe");
-        titleLabel.setFont(font);
-        titleLabel.setForeground(Color.WHITE);
+                for (int i = 0; i < 9; ++i) {
+                    JButton button = new JButton();
+                    button.setFont(font);
+                    button.setFocusable(false);
+                    button.setBackground(backGroundColor);
+                    button.setForeground(Color.WHITE);
+                    button.setFocusPainted(true);
+                    button.setCursor(Cursor.getPredefinedCursor(Cursor.HAND_CURSOR));
+                    button.addActionListener(this);
+                    buttons.add(button);
+                    buttonPanel.add(button);
+                }
 
-        GridBagConstraints titleGbc = new GridBagConstraints();
-        titleGbc.gridx = 0;
-        titleGbc.gridy = 0;
-        titleGbc.insets = new Insets(0, 0, 20, 0);
-        multiPlayerPanel.add(titleLabel, titleGbc);
+                panel.add(buttonPanel, buttonGbc);
 
-        // Buttons
-        JPanel buttonPanel = new JPanel(new GridLayout(3, 3));
-        buttonPanel.setPreferredSize(new Dimension(300, 300));
+                // Back button
+                JButton backButton = new JButton("Back");
+                backButton.setPreferredSize(new Dimension(BUTTON_WIDTH, BUTTON_HEIGTH));
+                backButton.setFont(font);
+                backButton.setFocusable(false);
+                backButton.setBackground(backGroundColor);
+                backButton.setForeground(Color.WHITE);
+                backButton.setFocusPainted(true);
+                backButton.setCursor(Cursor.getPredefinedCursor(Cursor.HAND_CURSOR));
+                backButton.addActionListener(e -> {
+                    onClick("back_to_home");
+                });
 
-        GridBagConstraints buttonGbc = new GridBagConstraints();
-        buttonGbc.gridx = 0;
-        buttonGbc.gridy = 1;
+                GridBagConstraints backButtonGbc = new GridBagConstraints();
+                backButtonGbc.gridx = 0;
+                backButtonGbc.gridy = 2;
+                backButtonGbc.insets = new Insets(25, 0, 0, BUTTON_WIDTH + 10);
 
-        for (int i = 0; i < 9; ++i) {
-            JButton button = new JButton();
-            button.setFont(font);
-            button.setFocusable(false);
-            button.setBackground(backGroundColor);
-            button.setForeground(Color.WHITE);
-            button.setFocusPainted(true);
-            button.setCursor(Cursor.getPredefinedCursor(Cursor.HAND_CURSOR));
-            button.addActionListener(this);
-            buttons.add(button);
-            buttonPanel.add(button);
+                // Reset button
+                JButton resetButton = new JButton("Reset");
+                resetButton.setPreferredSize(new Dimension(BUTTON_WIDTH, BUTTON_HEIGTH));
+                resetButton.setFont(font);
+                resetButton.setFocusable(false);
+                resetButton.setBackground(backGroundColor);
+                resetButton.setForeground(Color.WHITE);
+                resetButton.setFocusPainted(true);
+                resetButton.setCursor(Cursor.getPredefinedCursor(Cursor.HAND_CURSOR));
+                resetButton.addActionListener(e -> {
+                    onClick("reset_game");
+                });
+
+                GridBagConstraints resetButtonGbc = new GridBagConstraints();
+                resetButtonGbc.gridx = 0;
+                resetButtonGbc.gridy = 2;
+                resetButtonGbc.insets = new Insets(25, BUTTON_WIDTH + 10, 0, 0);
+
+                panel.add(backButton, backButtonGbc);
+                panel.add(resetButton, resetButtonGbc);
+
+                break;
+            }
         }
 
-        multiPlayerPanel.add(buttonPanel, buttonGbc);
-
-        // Back button
-        JButton backButton = new JButton("Back");
-        backButton.setPreferredSize(new Dimension(BUTTON_WIDTH, BUTTON_HEIGTH));
-        backButton.setFont(font);
-        backButton.setFocusable(false);
-        backButton.setBackground(backGroundColor);
-        backButton.setForeground(Color.WHITE);
-        backButton.setFocusPainted(true);
-        backButton.setCursor(Cursor.getPredefinedCursor(Cursor.HAND_CURSOR));
-        backButton.addActionListener(e -> {
-            onClick("back_to_home");
-        });
-
-        GridBagConstraints backButtonGbc = new GridBagConstraints();
-        backButtonGbc.gridx = 0;
-        backButtonGbc.gridy = 2;
-        backButtonGbc.insets = new Insets(25, 0, 0, BUTTON_WIDTH + 10);
-
-        // Reset button
-        JButton resetButton = new JButton("Reset");
-        resetButton.setPreferredSize(new Dimension(BUTTON_WIDTH, BUTTON_HEIGTH));
-        resetButton.setFont(font);
-        resetButton.setFocusable(false);
-        resetButton.setBackground(backGroundColor);
-        resetButton.setForeground(Color.WHITE);
-        resetButton.setFocusPainted(true);
-        resetButton.setCursor(Cursor.getPredefinedCursor(Cursor.HAND_CURSOR));
-        resetButton.addActionListener(e -> {
-            onClick("reset_game");
-        });
-
-        GridBagConstraints resetButtonGbc = new GridBagConstraints();
-        resetButtonGbc.gridx = 0;
-        resetButtonGbc.gridy = 2;
-        resetButtonGbc.insets = new Insets(25, BUTTON_WIDTH + 10, 0, 0);
-
-
-        multiPlayerPanel.add(backButton, backButtonGbc);
-        multiPlayerPanel.add(resetButton, resetButtonGbc);
-
-        return multiPlayerPanel;
+        return panel;
     }
 
-    private JPanel createSinglePlayer() {
-        setCurrentPlayer('X');
-        setGameRunning(true);
+//    private JPanel createHomePage() {
+//        JPanel homePanel = new JPanel(new GridBagLayout());
+//        homePanel.setBackground(backGroundColor);
+//
+//
+//        // Title
+//        JLabel titleLabel = new JLabel("Tic Tac Toe");
+//        titleLabel.setFont(font);
+//        titleLabel.setForeground(Color.WHITE);
+//
+//        GridBagConstraints titleGbc = new GridBagConstraints();
+//        titleGbc.gridx = 0;
+//        titleGbc.gridy = 0;
+//        titleGbc.insets = new Insets(0, 0, 20, 0);
+//
+//        // SinglePlayer button
+//
+//
+//        homePanel.add(titleLabel, titleGbc);
+//        homePanel.add(singlePlayerButton, singlePlayerButtonGbc);
+//        homePanel.add(multiPlayerButton, multiPlayerButtonGbc);
+//
+//        return homePanel;
+//    }
 
-        // SinglePlayer panel
-        JPanel singlePlayerPanel = new JPanel(new GridBagLayout());
-        singlePlayerPanel.setBackground(backGroundColor);
-
-        // Title
-        JLabel titleLabel = new JLabel("Tic Tac Toe");
-        titleLabel.setFont(font);
-        titleLabel.setForeground(Color.WHITE);
-
-        GridBagConstraints titleGbc = new GridBagConstraints();
-        titleGbc.gridx = 0;
-        titleGbc.gridy = 0;
-        titleGbc.insets = new Insets(0, 0, 20, 0);
-        singlePlayerPanel.add(titleLabel, titleGbc);
-
-        // Buttons
-        JPanel buttonPanel = new JPanel(new GridLayout(3, 3));
-        buttonPanel.setPreferredSize(new Dimension(300, 300));
-
-        GridBagConstraints buttonGbc = new GridBagConstraints();
-        buttonGbc.gridx = 0;
-        buttonGbc.gridy = 1;
-
-        for (int i = 0; i < 9; ++i) {
-            JButton button = new JButton();
-            button.setFont(font);
-            button.setFocusable(false);
-            button.setBackground(backGroundColor);
-            button.setForeground(Color.WHITE);
-            button.setFocusPainted(true);
-            button.setCursor(Cursor.getPredefinedCursor(Cursor.HAND_CURSOR));
-            button.addActionListener(this);
-            buttons.add(button);
-            buttonPanel.add(button);
-        }
-
-        singlePlayerPanel.add(buttonPanel, buttonGbc);
-
-        // Back button
-        JButton backButton = new JButton("Back");
-        backButton.setPreferredSize(new Dimension(BUTTON_WIDTH, BUTTON_HEIGTH));
-        backButton.setFont(font);
-        backButton.setFocusable(false);
-        backButton.setBackground(backGroundColor);
-        backButton.setForeground(Color.WHITE);
-        backButton.setFocusPainted(true);
-        backButton.setCursor(Cursor.getPredefinedCursor(Cursor.HAND_CURSOR));
-        backButton.addActionListener(e -> {
-            onClick("back_to_home");
-        });
-
-        GridBagConstraints backButtonGbc = new GridBagConstraints();
-        backButtonGbc.gridx = 0;
-        backButtonGbc.gridy = 2;
-        backButtonGbc.insets = new Insets(25, 0, 0, BUTTON_WIDTH + 10);
-
-        // Reset button
-        JButton resetButton = new JButton("Reset");
-        resetButton.setPreferredSize(new Dimension(BUTTON_WIDTH, BUTTON_HEIGTH));
-        resetButton.setFont(font);
-        resetButton.setFocusable(false);
-        resetButton.setBackground(backGroundColor);
-        resetButton.setForeground(Color.WHITE);
-        resetButton.setFocusPainted(true);
-        resetButton.setCursor(Cursor.getPredefinedCursor(Cursor.HAND_CURSOR));
-        resetButton.addActionListener(e -> {
-            onClick("reset_game");
-        });
-
-        GridBagConstraints resetButtonGbc = new GridBagConstraints();
-        resetButtonGbc.gridx = 0;
-        resetButtonGbc.gridy = 2;
-        resetButtonGbc.insets = new Insets(25, BUTTON_WIDTH + 10, 0, 0);
-
-
-        singlePlayerPanel.add(backButton, backButtonGbc);
-        singlePlayerPanel.add(resetButton, resetButtonGbc);
-
-        return singlePlayerPanel;
-    }
+//    private JPanel createMultiPlayer() {
+//        setCurrentPlayer('X');
+//        setGameRunning(true);
+//
+//        // MultiPlayer panel
+//        JPanel multiPlayerPanel = new JPanel(new GridBagLayout());
+//        multiPlayerPanel.setBackground(backGroundColor);
+//
+//        // Title
+//        JLabel titleLabel = new JLabel("Tic Tac Toe");
+//        titleLabel.setFont(font);
+//        titleLabel.setForeground(Color.WHITE);
+//
+//        GridBagConstraints titleGbc = new GridBagConstraints();
+//        titleGbc.gridx = 0;
+//        titleGbc.gridy = 0;
+//        titleGbc.insets = new Insets(0, 0, 20, 0);
+//        multiPlayerPanel.add(titleLabel, titleGbc);
+//
+//        // Buttons
+//        JPanel buttonPanel = new JPanel(new GridLayout(3, 3));
+//        buttonPanel.setPreferredSize(new Dimension(300, 300));
+//
+//        GridBagConstraints buttonGbc = new GridBagConstraints();
+//        buttonGbc.gridx = 0;
+//        buttonGbc.gridy = 1;
+//
+//        for (int i = 0; i < 9; ++i) {
+//            JButton button = new JButton();
+//            button.setFont(font);
+//            button.setFocusable(false);
+//            button.setBackground(backGroundColor);
+//            button.setForeground(Color.WHITE);
+//            button.setFocusPainted(true);
+//            button.setCursor(Cursor.getPredefinedCursor(Cursor.HAND_CURSOR));
+//            button.addActionListener(this);
+//            buttons.add(button);
+//            buttonPanel.add(button);
+//        }
+//
+//        multiPlayerPanel.add(buttonPanel, buttonGbc);
+//
+//        // Back button
+//        JButton backButton = new JButton("Back");
+//        backButton.setPreferredSize(new Dimension(BUTTON_WIDTH, BUTTON_HEIGTH));
+//        backButton.setFont(font);
+//        backButton.setFocusable(false);
+//        backButton.setBackground(backGroundColor);
+//        backButton.setForeground(Color.WHITE);
+//        backButton.setFocusPainted(true);
+//        backButton.setCursor(Cursor.getPredefinedCursor(Cursor.HAND_CURSOR));
+//        backButton.addActionListener(e -> {
+//            onClick("back_to_home");
+//        });
+//
+//        GridBagConstraints backButtonGbc = new GridBagConstraints();
+//        backButtonGbc.gridx = 0;
+//        backButtonGbc.gridy = 2;
+//        backButtonGbc.insets = new Insets(25, 0, 0, BUTTON_WIDTH + 10);
+//
+//        // Reset button
+//        JButton resetButton = new JButton("Reset");
+//        resetButton.setPreferredSize(new Dimension(BUTTON_WIDTH, BUTTON_HEIGTH));
+//        resetButton.setFont(font);
+//        resetButton.setFocusable(false);
+//        resetButton.setBackground(backGroundColor);
+//        resetButton.setForeground(Color.WHITE);
+//        resetButton.setFocusPainted(true);
+//        resetButton.setCursor(Cursor.getPredefinedCursor(Cursor.HAND_CURSOR));
+//        resetButton.addActionListener(e -> {
+//            onClick("reset_game");
+//        });
+//
+//        GridBagConstraints resetButtonGbc = new GridBagConstraints();
+//        resetButtonGbc.gridx = 0;
+//        resetButtonGbc.gridy = 2;
+//        resetButtonGbc.insets = new Insets(25, BUTTON_WIDTH + 10, 0, 0);
+//
+//
+//        multiPlayerPanel.add(backButton, backButtonGbc);
+//        multiPlayerPanel.add(resetButton, resetButtonGbc);
+//
+//        return multiPlayerPanel;
+//    }
+//
+//    private JPanel createSinglePlayer() {
+//        setCurrentPlayer('X');
+//        setGameRunning(true);
+//
+//        // SinglePlayer panel
+//        JPanel singlePlayerPanel = new JPanel(new GridBagLayout());
+//        singlePlayerPanel.setBackground(backGroundColor);
+//
+//        // Title
+//        JLabel titleLabel = new JLabel("Tic Tac Toe");
+//        titleLabel.setFont(font);
+//        titleLabel.setForeground(Color.WHITE);
+//
+//        GridBagConstraints titleGbc = new GridBagConstraints();
+//        titleGbc.gridx = 0;
+//        titleGbc.gridy = 0;
+//        titleGbc.insets = new Insets(0, 0, 20, 0);
+//        singlePlayerPanel.add(titleLabel, titleGbc);
+//
+//        // Buttons
+//        JPanel buttonPanel = new JPanel(new GridLayout(3, 3));
+//        buttonPanel.setPreferredSize(new Dimension(300, 300));
+//
+//        GridBagConstraints buttonGbc = new GridBagConstraints();
+//        buttonGbc.gridx = 0;
+//        buttonGbc.gridy = 1;
+//
+//        for (int i = 0; i < 9; ++i) {
+//            JButton button = new JButton();
+//            button.setFont(font);
+//            button.setFocusable(false);
+//            button.setBackground(backGroundColor);
+//            button.setForeground(Color.WHITE);
+//            button.setFocusPainted(true);
+//            button.setCursor(Cursor.getPredefinedCursor(Cursor.HAND_CURSOR));
+//            button.addActionListener(this);
+//            buttons.add(button);
+//            buttonPanel.add(button);
+//        }
+//
+//        singlePlayerPanel.add(buttonPanel, buttonGbc);
+//
+//        // Back button
+//        JButton backButton = new JButton("Back");
+//        backButton.setPreferredSize(new Dimension(BUTTON_WIDTH, BUTTON_HEIGTH));
+//        backButton.setFont(font);
+//        backButton.setFocusable(false);
+//        backButton.setBackground(backGroundColor);
+//        backButton.setForeground(Color.WHITE);
+//        backButton.setFocusPainted(true);
+//        backButton.setCursor(Cursor.getPredefinedCursor(Cursor.HAND_CURSOR));
+//        backButton.addActionListener(e -> {
+//            onClick("back_to_home");
+//        });
+//
+//        GridBagConstraints backButtonGbc = new GridBagConstraints();
+//        backButtonGbc.gridx = 0;
+//        backButtonGbc.gridy = 2;
+//        backButtonGbc.insets = new Insets(25, 0, 0, BUTTON_WIDTH + 10);
+//
+//        // Reset button
+//        JButton resetButton = new JButton("Reset");
+//        resetButton.setPreferredSize(new Dimension(BUTTON_WIDTH, BUTTON_HEIGTH));
+//        resetButton.setFont(font);
+//        resetButton.setFocusable(false);
+//        resetButton.setBackground(backGroundColor);
+//        resetButton.setForeground(Color.WHITE);
+//        resetButton.setFocusPainted(true);
+//        resetButton.setCursor(Cursor.getPredefinedCursor(Cursor.HAND_CURSOR));
+//        resetButton.addActionListener(e -> {
+//            onClick("reset_game");
+//        });
+//
+//        GridBagConstraints resetButtonGbc = new GridBagConstraints();
+//        resetButtonGbc.gridx = 0;
+//        resetButtonGbc.gridy = 2;
+//        resetButtonGbc.insets = new Insets(25, BUTTON_WIDTH + 10, 0, 0);
+//
+//
+//        singlePlayerPanel.add(backButton, backButtonGbc);
+//        singlePlayerPanel.add(resetButton, resetButtonGbc);
+//
+//        return singlePlayerPanel;
+//    }
 
     private void setCurrentPlayer(char currentPlayer) {
         this.currentPlayer = currentPlayer;
@@ -360,7 +460,7 @@ public class TicTacToe implements ActionListener {
     private void onClick(String type) {
         switch (type) {
             case "back_to_home" -> {
-                mainPanel = createHomePage();
+                mainPanel = createPanel("home_page");
                 frame.setContentPane(mainPanel);
                 frame.revalidate();
                 frame.repaint();
@@ -377,7 +477,7 @@ public class TicTacToe implements ActionListener {
             }
             case "multiplayer" -> {
                 buttons.clear();
-                mainPanel = createMultiPlayer();
+                mainPanel = createPanel("game_page");
                 frame.setContentPane(mainPanel);
                 frame.revalidate();
                 frame.repaint();
@@ -386,7 +486,7 @@ public class TicTacToe implements ActionListener {
             }
             case "singleplayer" -> {
                 buttons.clear();
-                mainPanel = createSinglePlayer();
+                mainPanel = createPanel("game_page");
                 frame.setContentPane(mainPanel);
                 frame.revalidate();
                 frame.repaint();
